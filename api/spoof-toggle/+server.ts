@@ -24,9 +24,12 @@ export const POST = async ({ request }) => {
     const spoofKey = SPOOF_KEYS[key];
     if (value) {
       await patchMGCopyAnswer(spoofKey, `Spoofed${key.toUpperCase()}`);
+      await appendToSpoofLog(`✅ Spoof ENABLED: ${spoofKey} -> "Spoofed${key.toUpperCase()}"`);
     } else {
       await clearMGCopyAnswerPatch(spoofKey);
+      await appendToSpoofLog(`❌ Spoof DISABLED: ${spoofKey} removed`);
     }
+
 
     return new Response(JSON.stringify({ success: true }));
   } catch (err) {
