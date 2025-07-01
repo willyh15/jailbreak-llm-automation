@@ -20,17 +20,26 @@
     }
   }
 
+  async function downloadSnapshot() {
+    try {
+      const res = await fetch('/api/snapshot');
+      const { path } = await res.json();
+      const url = `/api/download?path=${encodeURIComponent(path)}`;
+      window.open(url, '_blank');
+    } catch (e) {
+      alert('Failed to generate snapshot.');
+    }
+  }
+
   // Initial load
   loadDashboard();
 
   // 🔁 Poll every 5 seconds
   const interval = setInterval(loadDashboard, 5000);
 
-  // Cleanup if user leaves page
   import { onDestroy } from 'svelte';
   onDestroy(() => clearInterval(interval));
 </script>
-
 
 <div class="min-h-screen bg-midnight text-white p-6">
   <h1 class="text-3xl font-bold mb-4">📊 GhostTrigger Dashboard</h1>
@@ -68,6 +77,13 @@
         <li><a href="/agent">▶ GhostAgent Terminal</a></li>
         <li><a href="/spoof">▶ Spoof Toggles</a></li>
       </ul>
+
+      <button
+        class="mt-6 bg-pinknoise text-black font-bold px-6 py-2 rounded-xl hover:scale-105 transition"
+        on:click={downloadSnapshot}
+      >
+        📦 Download Snapshot
+      </button>
     </div>
   </div>
 </div>
