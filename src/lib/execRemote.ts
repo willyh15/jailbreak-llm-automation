@@ -14,6 +14,22 @@ export async function appendToSpoofLog(line: string) {
   return await runRemoteCommand(cmd);
 }
 
+export async function buildSnapshot(): Promise<string> {
+  const now = new Date().toISOString().split('T')[0];
+  const zipPath = `/var/jb/ghosttrigger/snapshot-${now}.zip`;
+
+  const cmd = `
+    cd /var/jb/ghosttrigger && \
+    echo "Device Info:" > system-info.txt && \
+    uname -a >> system-info.txt && \
+    sw_vers >> system-info.txt 2>/dev/null || echo "No sw_vers" >> system-info.txt && \
+    zip -r ${zipPath} spoof.json spoof.log MGCopyAnswerOverrides.plist system-info.txt
+  `;
+
+  await runRemoteCommand(cmd);
+  return zipPath;
+}
+
 
 export async function writeRemoteJSON(path: string, data: any): Promise<string> {
   const content = JSON.stringify(data).replace(/"/g, '\\"');
