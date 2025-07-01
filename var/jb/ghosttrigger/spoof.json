@@ -1,0 +1,6 @@
+// /var/jb/ghosttrigger/spoof.json
+{
+  "model": true,
+  "carrier": false,
+  "serial": true
+}
