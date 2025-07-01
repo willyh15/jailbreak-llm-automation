@@ -76,6 +76,7 @@
         <li><a href="/scanner">▶ Scan System</a></li>
         <li><a href="/agent">▶ GhostAgent Terminal</a></li>
         <li><a href="/spoof">▶ Spoof Toggles</a></li>
+        <li><a href="/settings">▶ SSH Settings</a></li>
       </ul>
 
       <button
