@@ -1,24 +1,36 @@
 <script lang="ts">
   let data = {
-    jailbreak: 'Unknown',
-    ios: 'Unknown',
-    model: 'Unknown',
+    jailbreak: 'Loading...',
+    ios: 'Loading...',
+    model: 'Loading...',
     spoof: {
       model: false,
       carrier: false,
       serial: false
     },
-    rsim: 'Not Triggered'
+    rsim: 'Loading...'
   };
 
   async function loadDashboard() {
-    const res = await fetch('/api/dashboard');
-    const json = await res.json();
-    data = json;
+    try {
+      const res = await fetch('/api/dashboard');
+      data = await res.json();
+    } catch (e) {
+      data.rsim = 'Error loading data.';
+    }
   }
 
+  // Initial load
   loadDashboard();
+
+  // 🔁 Poll every 5 seconds
+  const interval = setInterval(loadDashboard, 5000);
+
+  // Cleanup if user leaves page
+  import { onDestroy } from 'svelte';
+  onDestroy(() => clearInterval(interval));
 </script>
+
 
 <div class="min-h-screen bg-midnight text-white p-6">
   <h1 class="text-3xl font-bold mb-4">📊 GhostTrigger Dashboard</h1>
