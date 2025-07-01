@@ -7,6 +7,14 @@ export async function readRemoteJSON(path: string): Promise<any> {
   }
 }
 
+export async function appendToSpoofLog(line: string) {
+  const timestamp = new Date().toISOString().replace('T', ' ').split('.')[0];
+  const fullLine = `[${timestamp}] ${line.replace(/"/g, '\\"')}`;
+  const cmd = `echo "${fullLine}" >> /var/jb/ghosttrigger/spoof.log`;
+  return await runRemoteCommand(cmd);
+}
+
+
 export async function writeRemoteJSON(path: string, data: any): Promise<string> {
   const content = JSON.stringify(data).replace(/"/g, '\\"');
   const echo = `echo "${content}" > ${path}`;
