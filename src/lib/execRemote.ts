@@ -1,4 +1,18 @@
-// You can call this from any API route to run real jailbreak commands remotely
+export async function readRemoteJSON(path: string): Promise<any> {
+  const cat = await runRemoteCommand(`cat ${path} || echo '{}'`);
+  try {
+    return JSON.parse(cat);
+  } catch {
+    return {};
+  }
+}
+
+export async function writeRemoteJSON(path: string, data: any): Promise<string> {
+  const content = JSON.stringify(data).replace(/"/g, '\\"');
+  const echo = `echo "${content}" > ${path}`;
+  return await runRemoteCommand(echo);
+}
+
 export async function runRemoteCommand(cmd: string): Promise<string> {
   const sshHost = process.env.SSH_HOST;      // e.g. '192.168.1.137'
   const sshUser = process.env.SSH_USER;      // e.g. 'root'
