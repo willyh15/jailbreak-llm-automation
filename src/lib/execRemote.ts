@@ -32,7 +32,6 @@ export async function buildSnapshot(): Promise<string> {
   return zipPath;
 }
 
-
 export async function writeRemoteJSON(path: string, data: any): Promise<string> {
   const content = JSON.stringify(data).replace(/"/g, '\\"');
   const echo = `echo "${content}" > ${path}`;
@@ -52,6 +51,10 @@ export async function clearMGCopyAnswerPatch(key: string) {
 }
 
 export async function runRemoteCommand(cmd: string): Promise<string> {
+  if (process.env.VERCEL) {
+    throw new Error('SSH is disabled in deployed (Vercel) environment.');
+  }
+
   const { host, user, pass } = getSSHConfig();
 
   const keyOption = pass === '__USE_KEY__'
@@ -68,4 +71,3 @@ export async function runRemoteCommand(cmd: string): Promise<string> {
     });
   });
 }
-
