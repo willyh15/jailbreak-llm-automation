@@ -54,17 +54,18 @@ export async function clearMGCopyAnswerPatch(key: string) {
 export async function runRemoteCommand(cmd: string): Promise<string> {
   const { host, user, pass } = getSSHConfig();
 
-  if (!host || !user || !pass) {
-    throw new Error('SSH credentials not configured.');
-  }
+  const keyOption = pass === '__USE_KEY__'
+    ? `-i ~/.ssh/id_rsa`
+    : `sshpass -p '${pass}'`;
+
+  const ssh = `${keyOption} ssh -o StrictHostKeyChecking=no ${user}@${host} '${cmd}'`;
 
   return new Promise((resolve, reject) => {
     const { exec } = require('child_process');
-    const ssh = `sshpass -p '${pass}' ssh -o StrictHostKeyChecking=no ${user}@${host} '${cmd}'`;
-
     exec(ssh, (error: any, stdout: string, stderr: string) => {
       if (error) return reject(stderr);
       resolve(stdout.trim());
     });
   });
 }
+
