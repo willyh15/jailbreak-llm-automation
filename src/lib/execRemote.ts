@@ -13,6 +13,19 @@ export async function writeRemoteJSON(path: string, data: any): Promise<string> 
   return await runRemoteCommand(echo);
 }
 
+export async function patchMGCopyAnswer(key: string, value: string | boolean) {
+  const plistPath = '/var/jb/ghosttrigger/MGCopyAnswerOverrides.plist';
+  const command = `plutil -replace ${key} -${typeof value} "${value}" ${plistPath}`;
+  return await runRemoteCommand(command);
+}
+
+export async function clearMGCopyAnswerPatch(key: string) {
+  const plistPath = '/var/jb/ghosttrigger/MGCopyAnswerOverrides.plist';
+  const command = `plutil -remove ${key} ${plistPath}`;
+  return await runRemoteCommand(command);
+}
+
+
 export async function runRemoteCommand(cmd: string): Promise<string> {
   const sshHost = process.env.SSH_HOST;      // e.g. '192.168.1.137'
   const sshUser = process.env.SSH_USER;      // e.g. 'root'
