@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Config
+SERVER_URL="http://<YOUR_LAN_MACHINE_IP>:5173/api/command"  # Change to your local GhostTrigger dev server
+DEVICE_ID="iphone13_pro_dopamine"
+INTERVAL=5
+
+log() {
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
+}
+
+/usr/bin/which curl >/dev/null || { echo "curl not found. Install curl via apt."; exit 1; }
+
+while true; do
+  # Pull command
+  RESPONSE=$(curl -s "$SERVER_URL?device=$DEVICE_ID")
+  CMD=$(echo "$RESPONSE" | grep -oP '(?<="cmd":")[^"]+')
+
+  if [ ! -z "$CMD" ]; then
+    log "Executing: $CMD"
+    OUTPUT=$(eval "$CMD" 2>&1)
+    curl -X POST -H "Content-Type: application/json" -d "{\"device\": \"$DEVICE_ID\", \"output\": \"$OUTPUT\"}" "$SERVER_URL"
+  fi
+
+  sleep $INTERVAL
+done
