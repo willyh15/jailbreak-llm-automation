@@ -1,18 +1,31 @@
-<script lang="ts">
-  let host = '';
-  let user = 'root';
-  let pass = '';
+import { onMount } from 'svelte';
 
-  async function submitSettings() {
-    await fetch('/api/settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ host, user, pass })
-    });
+let host = '';
+let user = 'root';
+let pass = '';
 
-    alert('SSH settings saved for session.');
+onMount(() => {
+  const saved = localStorage.getItem('sshConfig');
+  if (saved) {
+    const { host: h, user: u, pass: p } = JSON.parse(saved);
+    host = h;
+    user = u;
+    pass = p;
+    submitSettings(); // Auto sync on load
   }
-</script>
+});
+
+async function submitSettings() {
+  const config = { host, user, pass };
+  localStorage.setItem('sshConfig', JSON.stringify(config));
+  await fetch('/api/settings', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(config)
+  });
+  alert('SSH settings saved.');
+}
+
 
 <div class="min-h-screen bg-midnight text-white p-6 flex flex-col items-center justify-center">
   <h1 class="text-2xl font-bold mb-6">🔧 SSH Settings</h1>
