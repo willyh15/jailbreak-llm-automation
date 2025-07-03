@@ -10,12 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Install dependencies
         run: npm install
+
       - name: Lint check
         run: npm run lint
+
+      - name: Fix SvelteKit binary path
+        run: npm install -g svelte
+
       - name: Build
-        run: npm run build
+        run: npx svelte-kit build
 
   deploy:
     needs: build
