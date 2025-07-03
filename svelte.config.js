@@ -1,10 +1,15 @@
 import adapter from '@sveltejs/adapter-static';
+import preprocess from 'svelte-preprocess';
 
-export default {
+/** @type {import('@sveltejs/kit').Config} */
+const config = {
   kit: {
     adapter: adapter(),
     alias: {
-      $lib: './src/lib',
+      $lib: './src/lib'
     }
-  }
+  },
+  preprocess: preprocess()
 };
+
+export default config;
